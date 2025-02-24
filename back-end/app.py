@@ -142,7 +142,7 @@ def recognize_face():
 
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
-    """Shuts down the server and releases the webcam."""
+    """shuts down the server and releases the webcam."""
     global cap
     if cap and cap.isOpened():
         cap.release()
