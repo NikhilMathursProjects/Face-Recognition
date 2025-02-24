@@ -3,15 +3,41 @@ import axios from "axios";
 
 function App() {
     const [recognizedFaces, setRecognizedFaces] = useState([]);
-
+    const [allowedStatus, setAllowedStatus] = useState(false);
     useEffect(() => {
         const interval = setInterval(() => {
             axios.get("http://127.0.0.1:5000/recognize_face")
-                .then(response => setRecognizedFaces(response.data.recognized_faces))
+                .then(response => 
+                    {const faces = response.data.recognized_faces;
+                    setRecognizedFaces(faces);
+
+                    //Check if there one face thats not unknown
+                    const isAllowed = faces.some(face => face.name !== "Unknown");
+                    setAllowedStatus(isAllowed);}   
+            )
                 .catch(error => console.log(error));
         }, 2000);
+        
         return () => clearInterval(interval);
     }, []);
+    
+    // face=recognizedFaces.map(face);
+    // recognizedFaces.forEach((faces) => {
+    //     console.log(faces);
+    //     if(faces!=='Unknown'){
+    //         setAllowedStatus(true);
+    //     }else{
+    //         setAllowedStatus(false);
+    //     }
+    // });
+    // recognizedFaces
+    // if(recognizedFaces!=="Unknown"){
+    //     setAllowedStatus(true);
+    // }else{
+    //     setAllowedStatus(false);
+    // }
+    
+
 
     return (
         <div>
@@ -23,6 +49,8 @@ function App() {
                     <li key={index}>{face.name} ({face.confidence}%)</li>
                 ))}
             </ul>
+            <h3>Allowed Status:</h3>
+            {allowedStatus?(<h4>ALLOWED</h4>):(<h4>NOT ALLOWED</h4>)}
         </div>
     );
 }
